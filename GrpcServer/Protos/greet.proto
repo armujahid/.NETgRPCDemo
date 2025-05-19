@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcDemo";
+
+package greet;
+
+// Unary
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply);
+  // Server streaming
+  rpc LotsOfReplies (HelloRequest) returns (stream HelloReply);
+  // Client streaming
+  rpc LotsOfGreetings (stream HelloRequest) returns (HelloReply);
+  // Bidirectional streaming
+  rpc BidiHello (stream HelloRequest) returns (stream HelloReply);
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloReply {
+  string message = 1;
+}
