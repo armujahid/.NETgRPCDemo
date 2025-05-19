@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using Grpc.Net.Client;
 using GrpcDemo;
+using Grpc.Net.Client.Configuration;
 
 // See https://aka.ms/new-console-template for more information
 // Process CLI arguments
@@ -20,12 +21,30 @@ Console.ReadKey();
 
 async Task RunGrpcDemosAsync(string name)
 {
+    // Configure retry policy
+    var defaultMethodConfig = new MethodConfig
+    {
+        Names = { MethodName.Default },
+        RetryPolicy = new RetryPolicy
+        {
+            MaxAttempts = 5,
+            InitialBackoff = TimeSpan.FromSeconds(1),
+            MaxBackoff = TimeSpan.FromSeconds(5),
+            BackoffMultiplier = 1.5,
+            RetryableStatusCodes = { StatusCode.Unavailable }
+        }
+    };
+
     // Create a channel to the gRPC server
-    using var channel = GrpcChannel.ForAddress("http://localhost:5000");
+    using var channel = GrpcChannel.ForAddress("http://localhost:5000", new GrpcChannelOptions
+    {
+        ServiceConfig = new ServiceConfig { MethodConfigs = { defaultMethodConfig } }
+    });
     var client = new Greeter.GreeterClient(channel);
 
     Console.WriteLine("=== gRPC Demo Showcase ===");
     Console.WriteLine("Running all gRPC communication patterns...\n");
+    Console.WriteLine("Note: All calls are configured with a retry policy for 'Unavailable' status codes.\n");
     
     try
     {
@@ -41,9 +60,15 @@ async Task RunGrpcDemosAsync(string name)
         // 4. Bidirectional Streaming RPC
         await DemoBidirectionalStreamingAsync(client, name);
     }
+    catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+    {
+        Console.WriteLine($"Error occurred: {ex.Status.Detail} (Status: {ex.StatusCode})");
+        Console.WriteLine("This likely means the server was unavailable and all retry attempts configured in the policy were exhausted.");
+        Console.WriteLine("Make sure the gRPC server is running at http://localhost:5000");
+    }
     catch (Exception ex)
     {
-        Console.WriteLine($"Error occurred: {ex.Message}");
+        Console.WriteLine($"An unexpected error occurred: {ex.Message}");
         Console.WriteLine("Make sure the gRPC server is running at http://localhost:5000");
     }
 }

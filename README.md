@@ -10,6 +10,7 @@ The client and server showcase the following gRPC communication patterns:
 2.  **Server Streaming RPC**: The client sends a single request to the server and gets a stream of responses back.
 3.  **Client Streaming RPC**: The client sends a stream of requests to the server and gets a single response back.
 4.  **Bidirectional Streaming RPC**: The client sends a stream of requests to the server and gets a stream of responses back. The client and server can read and write messages independently.
+5.  **Configurable Retries**: The client is configured with a global retry policy to automatically retry failed calls (e.g., on `Unavailable` status code) for all RPC methods.
 
 ## How to Run
 
