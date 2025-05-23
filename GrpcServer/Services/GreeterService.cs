@@ -14,7 +14,7 @@ public class GreeterService : GrpcDemo.Greeter.GreeterBase
     // Unary RPC
     public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
     {
-        _logger.LogInformation("Saying hello to {Name}", request.Name);
+        // _logger.LogInformation("Saying hello to {Name}", request.Name); // Logged by interceptor
         return Task.FromResult(new HelloReply
         {
             Message = "Hello " + request.Name
@@ -24,7 +24,7 @@ public class GreeterService : GrpcDemo.Greeter.GreeterBase
     // Server Streaming RPC
     public override async Task LotsOfReplies(HelloRequest request, IServerStreamWriter<HelloReply> responseStream, ServerCallContext context)
     {
-        _logger.LogInformation("Sending multiple replies to {Name}", request.Name);
+        // _logger.LogInformation("Sending multiple replies to {Name}", request.Name); // Logged by interceptor
         
         // Send 5 responses with a short delay between them
         for (int i = 1; i <= 5; i++)
@@ -52,7 +52,7 @@ public class GreeterService : GrpcDemo.Greeter.GreeterBase
         while (await requestStream.MoveNext())
         {
             var request = requestStream.Current;
-            _logger.LogInformation("Received greeting from {Name}", request.Name);
+            // _logger.LogInformation("Received greeting from {Name}", request.Name); // Logged by interceptor
             names.Add(request.Name);
         }
 
@@ -70,7 +70,7 @@ public class GreeterService : GrpcDemo.Greeter.GreeterBase
         while (await requestStream.MoveNext())
         {
             var request = requestStream.Current;
-            _logger.LogInformation("Bidirectional greeting for {Name}", request.Name);
+            // _logger.LogInformation("Bidirectional greeting for {Name}", request.Name); // Logged by interceptor
             
             // Respond to each message
             await responseStream.WriteAsync(new HelloReply
