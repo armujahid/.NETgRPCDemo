@@ -36,4 +36,4 @@ The server will start and listen on `https://localhost:5001` using HTTPS.
 
 Open another terminal, navigate to the project's root directory, and run the following command:
 dotnet run --project GrpcClient
-The client will first perform a health check and then make calls to the server demonstrating the different RPC patterns, using a default name ("World") for the requests. The client no longer accepts command-line arguments for the name.
+The client will first perform a health check and then make calls to the server demonstrating the different RPC patterns, using a default name ("World") for the requests.
